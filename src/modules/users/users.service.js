@@ -15,8 +15,8 @@ class UsersService {
     const { senha, email, nome } = data;
 
     if (!senha) {
-      throw new AppError("Senha é obrigatória", 400)
-    };
+      throw new AppError("Senha é obrigatória", 400);
+    }
 
     const existingUser = await this.repository.findByEmail(email);
     if (existingUser) {
@@ -25,49 +25,41 @@ class UsersService {
 
     const hashedPassword = await bcrypt.hash(senha, 10);
 
-    // const user = await prisma.usuarios.create({
-    //   data: { ...data, senha: hashedPassword },
-    //   omit: { senha: true },
-    // });
-
     const user = await this.repository.create({
       ...data,
-      senha: hashedPassword
+      senha: hashedPassword,
     });
 
-
     const token = jwt.sign(
-      { id: user.id, email: user.email, nome: user.nome },
-      process.env.JWT_SECRET, 
+      {
+        id: user.id,
+        email: user.email,
+        nome: user.nome,
+        nivel: user.nivel,
+      },
+      process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
 
-    let emailEnviado = false; 
-    // Porque false ? 
-    // O email é enviado de forma assíncrona, e queremos garantir que o processo de criação 
-    // do usuário não falhe mesmo que haja um problema no envio do email. 
-    // Assim, retornamos o usuário criado independentemente do resultado do envio do email,
-    //  e podemos informar ao cliente se o email foi enviado ou não.
-    // Tentar enviar o email, mas não falhar se houver um erro
+    let emailEnviado = false;
+
     try {
-      
       await sendMail({
         from: `"3D Tech" <${process.env.EMAIL_USER}>`,
         to: user.email,
         subject: "Confirme seu cadastro",
         html: `
-      <h2>Bem-vindo!</h2>
-      <p>Clique no link para confirmar seu email:</p>
-      <a href="${process.env.APP_URL}/api/users/confirm?token=${token}">Confirmar Email</a>
-      <p>O link é válido por 24 horas.</p>`,
+          <h2>Bem-vindo!</h2>
+          <p>Clique no link para confirmar seu email:</p>
+          <a href="${process.env.APP_URL}/api/users/confirm?token=${token}">
+            Confirmar Email
+          </a>
+          <p>O link é válido por 24 horas.</p>
+        `,
       });
 
       console.log(`Email de confirmação enviado para ${user.email}`);
       emailEnviado = true;
-      
-    //   if (!emailSent) {
-    //   console.warn(`Usuário ${user.id} criado, mas email não enviado`);
-    // }
     } catch (error) {
       console.error(`Usuário ${user.id} criado, mas email não enviado:`, error.message);
       emailEnviado = false;
@@ -81,8 +73,8 @@ class UsersService {
 
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch {
-      if(error.name === "TokenExpiredError") {
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
         throw new AppError("Token expirado", 400);
       }
       throw new AppError("Token inválido", 400);
@@ -99,10 +91,6 @@ class UsersService {
   }
 
   async findAll() {
-    // return await  prisma.usuarios.findMany({
-    //   orderBy: { id: "desc" },
-    //   omit: { senha: true },
-    // });
     const users = await this.repository.findAll();
     return users;
   }
@@ -125,8 +113,6 @@ class UsersService {
       throw new AppError("Usuário não encontrado", 404);
     }
     
-    // await this.findById(id);
-
     if (data.senha) {
       data.senha = await bcrypt.hash(data.senha, 10);
     }

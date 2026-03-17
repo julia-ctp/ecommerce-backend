@@ -59,4 +59,7 @@ const sendMail = async ({ to, subject, html, text }) => {
 //   }
 // };
 
-module.exports = transporter;
+module.exports = {
+  transporter,
+  sendMail,
+};

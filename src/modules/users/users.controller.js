@@ -15,13 +15,13 @@ class UsersController {
         return res.status(201).json({
           tipo:"warning",
           message: "Usuário criado, mas email de confirmação não enviado",
-          data: user,
+          dados: user,
         });
       }
 
       // if (user) {
       //   return res.status(201).json({
-      //   data: user,
+      //   dados: user,
       //   tipo:"success",
       //   message: "Usuário criado com sucesso",
       // });
@@ -30,7 +30,7 @@ class UsersController {
       return res.status(200).json({
         tipo:"success",
         message: "Usuário criado com sucesso. Verifique seu email para confirmar o cadastro.",
-        data: user,
+        dados: user,
       });
     } catch (error) {
       next(error);
@@ -59,7 +59,7 @@ class UsersController {
       return res.status(200).json({
         tipo: "success",
         message: "E-mail confirmado com sucesso",
-        data: result,
+        dados: result,
       });
     } catch (error) {
       next(error);
@@ -74,14 +74,14 @@ class UsersController {
         return res.status(201).json({
           tipo: "warning",
           message: "Nenhum usuário encontrado",
-          data: []
+          dados: []
         });
       }
 
       return res.status(200).json({
         tipo: "success",
         message: "Usuários encontrados com sucesso",
-        data: users
+        dados: users
       });
     } catch (error) {
       next(error);
@@ -96,7 +96,7 @@ class UsersController {
       return res.status(200).json({
         tipo: "success",
         message: "Usuário encontrado com sucesso",
-        data: user
+        dados: user
       });
     } catch (error) {
       next(error);
@@ -113,14 +113,14 @@ class UsersController {
         return res.status(201).json({
           tipo: "warning",
           message: "Nenhuma alteração foi realizada",
-          // data: updatedUser
+          // dados: updatedUser
         });
       }
 
       return res.status(200).json({
         tipo: "success",
         message: "Usuário atualizado com sucesso",
-        // data: updatedUser,
+        // dados: updatedUser,
       });
     } catch (error) {
       next(error);

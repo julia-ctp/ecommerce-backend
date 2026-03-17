@@ -16,7 +16,7 @@ router.get("/confirm", (req, res, next) =>
 router.use(rotaProtegida);
 router.use(validarUsuario);
 
-// router.use(rotaProtegida, apenasAdmin, validarUsuario);
+router.use(rotaProtegida, apenasAdmin, validarUsuario);
 
 router.get("/", verificarEmailConfirmado, (req, res, next) =>
   usersController.getAll(req, res, next)

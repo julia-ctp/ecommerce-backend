@@ -13,6 +13,10 @@ async function validarUsuario(req, res, next) {
     }
 
     const usuario = await userRepository.findById (usuarioId);
+    
+    console.log("validarUsuario - usuarioId:", usuarioId);
+    console.log("validarUsuario - usuario encontrado:", usuario);
+
 
     if (!usuario) {
       throw new AppError("Usuário não encontrado", 404);
@@ -26,9 +30,13 @@ async function validarUsuario(req, res, next) {
   }
 }
 
-async function verificarEmailConfirmado(reqm, res, next) {
+async function verificarEmailConfirmado(req, res, next) {
+
+    console.log("verificarEmailConfirmado - req.usuario:", req.usuario);
+    console.log("verificarEmailConfirmado - emailVerificado:", req.usuario?.emailVerificado);
+
   try {
-    if(!req.usuario) {
+    if (!req.usuario) {
       throw new AppError("Usuário não autenticado", 401);
     }
     if (!req.usuario.emailVerificado) {
